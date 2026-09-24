@@ -1,5 +1,5 @@
 // 每次发新版改这里的版本号，手机下次联网打开时会自动换新
-const VERSION = 'zhidefa-v1';
+const VERSION = 'zhidefa-v2';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {

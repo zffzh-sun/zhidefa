@@ -909,7 +909,7 @@ async function openBackup(){
   const canShare = navigator.canShare && navigator.canShare({files:[bkFile]});
   body.innerHTML =
       '<p class="big">' + n + ' 条，' + (bkFile.size >= 1048576 ? (bkFile.size/1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(bkFile.size/1024)) + ' KB') + '</p>'
-    + '<p>文字和图片都在这一个文件里。点下面的按钮，选「存储到文件」放进 iCloud 云盘，或者用微信发给「文件传输助手」。</p>'
+    + '<p>文字和图片都在这一个文件里。点下面的按钮，选「存储到“文件”」→ iCloud 云盘，或者隔空投送到 Mac。</p>'
     + '<button class="primary" id="bkGo">' + (canShare ? '保存 / 发送' : '下载备份文件') + '</button>'
     + '<p class="muted">为什么要备份：所有东西只存在这台手机上。手机丢了、换手机、删掉这个 App，没备份的就找不回来了。'
     + '换新手机时，在底部点「从备份恢复」选这个文件就行。</p>'
