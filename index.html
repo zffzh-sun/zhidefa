@@ -1,0 +1,1013 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="值得发">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#F5F5F2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141616" media="(prefers-color-scheme: dark)">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<title>值得发</title>
+<style>
+:root{
+  color-scheme:light dark;
+  --paper:#F5F5F2;
+  --card:#FFFFFF;
+  --card-2:#FAFAF8;
+  --ink:#17191A;
+  --ink-2:#565A5C;
+  --ink-3:#8A908E;
+  --rule:#E3E4E0;
+  --rule-2:#EDEEEA;
+  --vermilion:#C4402A;
+  --vermilion-soft:#F3E2DE;
+  --ochre:#A9791F;
+  --ochre-soft:#F2EAD8;
+  --slate:#5F7078;
+  --slate-soft:#E4EAEC;
+  --hollow:#B7BCBA;
+  --ok:#3E8E5A;
+  --shadow:0 1px 2px rgba(23,25,26,.05), 0 6px 18px rgba(23,25,26,.05);
+  --font-display:'Songti SC','STSong','Noto Serif SC','Source Han Serif SC',serif;
+  --font-body:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+  --font-mono:ui-monospace,'SF Mono',SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#141616;
+    --card:#1D2020;
+    --card-2:#232626;
+    --ink:#E9EAE7;
+    --ink-2:#A0A5A3;
+    --ink-3:#6E7472;
+    --rule:#2C302F;
+    --rule-2:#252928;
+    --vermilion:#E5674C;
+    --vermilion-soft:#3A2420;
+    --ochre:#D6A44A;
+    --ochre-soft:#332A18;
+    --slate:#8FA1A8;
+    --slate-soft:#22292B;
+    --hollow:#4A5150;
+    --ok:#5DB37C;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 6px 18px rgba(0,0,0,.25);
+  }
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:16px;
+  line-height:1.65;
+  -webkit-text-size-adjust:100%;
+  -webkit-tap-highlight-color:transparent;
+}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:none;padding:0}
+:focus-visible{outline:2px solid var(--vermilion);outline-offset:2px;border-radius:4px}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+.app{
+  max-width:600px;margin:0 auto;
+  padding:env(safe-area-inset-top) 16px calc(88px + env(safe-area-inset-bottom));
+  display:flex;flex-direction:column;gap:18px;
+}
+
+/* ---------- header ---------- */
+.hd{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:14px}
+.hd h1{margin:0;font-family:var(--font-display);font-weight:700;font-size:23px;letter-spacing:.06em;line-height:1.2}
+.hd h1 em{font-style:normal;color:var(--vermilion)}
+.bk{
+  font-family:var(--font-mono);font-size:11px;color:var(--ink-3);
+  display:flex;align-items:center;gap:6px;white-space:nowrap;padding:6px 0 6px 10px;
+}
+.bk .dot{width:6px;height:6px;border-radius:50%;background:var(--ok);flex:none}
+.bk[data-s="due"]{color:var(--ochre)}
+.bk[data-s="due"] .dot{background:var(--ochre)}
+.bk[data-s="warn"]{color:var(--vermilion)}
+.bk[data-s="warn"] .dot{background:var(--vermilion)}
+
+/* ---------- install banner ---------- */
+.install{
+  border:1px solid var(--ochre);background:var(--ochre-soft);border-radius:10px;
+  padding:12px 14px;font-size:13.5px;line-height:1.7;color:var(--ink);
+  display:flex;flex-direction:column;gap:8px;
+}
+.install b{color:var(--ochre)}
+.install button{align-self:flex-end;font-size:13px;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- composer ---------- */
+.composer{
+  background:var(--card);border:1px solid var(--rule);border-radius:12px;
+  box-shadow:var(--shadow);overflow:hidden;
+}
+.composer.focus{border-color:var(--ink-3)}
+#ta{
+  width:100%;border:none;background:none;resize:none;padding:16px 16px 8px;
+  min-height:128px;font-size:17px;line-height:1.75;display:block;
+}
+#ta:focus{outline:none}
+#ta::placeholder{color:var(--ink-3)}
+
+.thumbs{display:flex;flex-wrap:wrap;gap:8px;padding:0 16px}
+.thumbs:empty{display:none}
+.thumb{
+  position:relative;width:72px;height:72px;border-radius:8px;overflow:hidden;
+  background:var(--card-2);border:1px solid var(--rule);flex:none;
+}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb .x{
+  position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;
+  background:rgba(0,0,0,.6);color:#fff;font-size:12px;line-height:22px;text-align:center;
+}
+
+.tierline{padding:10px 16px 0;display:flex;gap:6px;flex-wrap:wrap}
+.opt{
+  border:1px solid var(--rule);border-radius:999px;padding:5px 12px;font-size:13px;
+  color:var(--ink-2);background:var(--card);line-height:1.45;
+}
+.opt[aria-pressed="true"]{color:#fff;border-color:transparent}
+.opt[data-t="unrated"][aria-pressed="true"]{background:var(--hollow);color:var(--card)}
+.opt[data-t="self"][aria-pressed="true"]{background:var(--slate)}
+.opt[data-t="moments"][aria-pressed="true"]{background:var(--ochre)}
+.opt[data-t="serious"][aria-pressed="true"]{background:var(--vermilion)}
+.opt[data-w][aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+
+.bar{
+  display:flex;align-items:center;gap:8px;padding:12px 16px 14px;margin-top:12px;
+  border-top:1px solid var(--rule-2);
+}
+.ghost{
+  font-size:13.5px;color:var(--ink-2);border:1px solid var(--rule);border-radius:8px;
+  padding:6px 11px;white-space:nowrap;
+}
+.ghost.on{border-color:var(--ochre);color:var(--ochre)}
+.hint{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-3);margin-left:auto;text-align:right;white-space:nowrap}
+.primary{
+  background:var(--vermilion);color:#fff;border-radius:8px;padding:7px 20px;
+  font-size:15px;font-weight:600;letter-spacing:.06em;flex:none;
+}
+.primary:disabled{opacity:.35}
+
+/* ---------- pulse ---------- */
+.pulse-wrap{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:12px 10px 8px}
+.pulse{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.day{display:flex;flex-direction:column;align-items:center;gap:5px;padding:4px 0 5px;border-radius:8px}
+.day[aria-pressed="true"]{background:var(--rule-2)}
+.day .stack{height:58px;display:flex;flex-direction:column-reverse;align-items:center;gap:3px}
+.mk{width:9px;height:9px;border-radius:50%;flex:none}
+.mk.serious{background:var(--vermilion)}
+.mk.moments{background:var(--ochre)}
+.mk.self{background:var(--slate)}
+.mk.unrated{box-shadow:inset 0 0 0 1.5px var(--hollow)}
+.more{font-family:var(--font-mono);font-size:9px;color:var(--ink-3);line-height:1}
+.day .num{font-family:var(--font-display);font-size:13px;color:var(--ink-2);line-height:1.1}
+.day .lbl{font-size:10.5px;color:var(--ink-3);line-height:1.1}
+.day.today .num{color:var(--vermilion);font-weight:700}
+.tally{
+  margin:10px 2px 0;font-size:12.5px;color:var(--ink-2);
+  display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;
+}
+.tally b{font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--ink);margin-right:2px}
+.tally .sep{color:var(--rule)}
+
+/* ---------- filters ---------- */
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filters .opt[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:transparent}
+
+/* ---------- feed ---------- */
+.feed{display:flex;flex-direction:column;gap:22px}
+.group{display:flex;flex-direction:column;gap:10px}
+.ghd{display:flex;align-items:baseline;gap:8px;padding:0 2px 6px;border-bottom:1px solid var(--rule)}
+.ghd .d{font-family:var(--font-display);font-size:15px;font-weight:700}
+.ghd .w{font-size:11.5px;color:var(--ink-3)}
+.ghd .c{margin-left:auto;font-family:var(--font-mono);font-size:11px;color:var(--ink-3)}
+
+.card{
+  background:var(--card);border:1px solid var(--rule);border-radius:10px;
+  padding:13px 14px;display:flex;flex-direction:column;gap:9px;
+  box-shadow:var(--shadow);cursor:pointer;
+}
+.card.timely{border-left:3px dashed var(--ochre);padding-left:12px}
+.card.stale{opacity:.6}
+.card.gone{opacity:.7;border-style:dashed;box-shadow:none}
+.card .tx{
+  white-space:pre-wrap;word-break:break-word;font-size:15px;line-height:1.7;
+  display:-webkit-box;-webkit-line-clamp:7;-webkit-box-orient:vertical;overflow:hidden;
+}
+.card .tx.empty{color:var(--ink-3);font-style:italic}
+.card .ims{display:flex;gap:6px;overflow-x:auto}
+.card .ims img{width:64px;height:64px;object-fit:cover;border-radius:6px;flex:none;background:var(--card-2)}
+.meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.tag{font-size:11px;padding:1.5px 8px;border-radius:999px;line-height:1.6}
+.tag.serious{background:var(--vermilion-soft);color:var(--vermilion)}
+.tag.moments{background:var(--ochre-soft);color:var(--ochre)}
+.tag.self{background:var(--slate-soft);color:var(--slate)}
+.tag.unrated{box-shadow:inset 0 0 0 1px var(--rule);color:var(--ink-3)}
+.tag.win{box-shadow:inset 0 0 0 1px var(--rule);color:var(--ink-2);font-family:var(--font-mono);font-size:10.5px}
+.tag.win.over{color:var(--ink-3);text-decoration:line-through}
+.meta .t{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-3);margin-left:auto}
+.qr{display:flex;gap:5px;align-items:center}
+.qr .q{font-size:11px;color:var(--ink-3)}
+.qr button{font-size:11.5px;padding:2px 9px;border-radius:999px;border:1px solid var(--rule);color:var(--ink-2)}
+.qr button[data-rate="serious"]{border-color:var(--vermilion-soft);color:var(--vermilion)}
+.qr button[data-rate="moments"]{border-color:var(--ochre-soft);color:var(--ochre)}
+.qr button[data-rate="self"]{border-color:var(--slate-soft);color:var(--slate)}
+
+.note{font-size:13px;color:var(--ink-3);line-height:1.75;border-left:2px solid var(--rule);padding-left:10px;margin:0}
+.card.sample{box-shadow:none;background:var(--card-2);border-style:dashed;cursor:default}
+.sample-flag{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;color:var(--ink-3)}
+.empty{display:flex;flex-direction:column;gap:12px}
+
+/* ---------- footer ---------- */
+.ft{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  border-top:1px solid var(--rule);padding-top:14px;
+  font-family:var(--font-mono);font-size:11px;color:var(--ink-3);
+}
+.ft button{font-family:var(--font-body);font-size:13px;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
+.ft .use{margin-left:auto}
+
+/* ---------- sheets ---------- */
+.sheet{
+  position:fixed;inset:0;z-index:40;background:var(--paper);
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+}
+.sheet-in{
+  max-width:600px;margin:0 auto;
+  padding:env(safe-area-inset-top) 16px calc(40px + env(safe-area-inset-bottom));
+  display:flex;flex-direction:column;gap:16px;
+}
+.sheet-hd{
+  position:sticky;top:0;background:var(--paper);z-index:2;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:14px 0 10px;border-bottom:1px solid var(--rule);
+}
+.sheet-hd .ttl{font-family:var(--font-display);font-size:16px;font-weight:700}
+.sheet-hd .rt{display:flex;align-items:center;gap:14px}
+.sheet-hd .done{color:var(--vermilion);font-weight:600;font-size:15px}
+#eta{
+  width:100%;border:1px solid var(--rule);background:var(--card);border-radius:10px;
+  resize:none;padding:14px;min-height:220px;font-size:17px;line-height:1.75;
+}
+#eta:focus{outline:none;border-color:var(--ink-3)}
+.sheet .thumbs{padding:0}
+.rows{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:center;gap:10px}
+.row .k{font-size:11px;color:var(--ink-3);letter-spacing:.12em;flex:none;width:30px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.sheet .bar{margin-top:0;padding:14px 0 0}
+.danger{color:var(--vermilion);font-size:13px;text-decoration:underline;text-underline-offset:3px;margin-left:auto}
+.stamp{font-family:var(--font-mono);font-size:11px;color:var(--ink-3);line-height:1.9}
+
+.bk-body{display:flex;flex-direction:column;gap:14px;font-size:14.5px;line-height:1.8}
+.bk-body p{margin:0}
+.bk-body .big{font-family:var(--font-display);font-size:18px;font-weight:700}
+.bk-body .primary{align-self:flex-start;padding:9px 22px}
+.bk-body .muted{color:var(--ink-3);font-size:13px}
+
+/* ---------- toast ---------- */
+.toast{
+  position:fixed;left:50%;transform:translateX(-50%);
+  bottom:calc(22px + env(safe-area-inset-bottom));z-index:60;
+  background:var(--ink);color:var(--paper);border-radius:999px;
+  padding:9px 18px;font-size:13.5px;display:flex;align-items:center;gap:14px;
+  box-shadow:0 8px 28px rgba(0,0,0,.28);max-width:calc(100% - 32px);
+}
+.toast button{color:var(--paper);text-decoration:underline;text-underline-offset:3px;font-size:13.5px;font-weight:600;flex:none}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="hd">
+    <h1>值得<em>发</em></h1>
+    <button class="bk" id="bkChip" hidden><span class="dot"></span><span id="bkTx"></span></button>
+  </header>
+
+  <div class="install" id="install" hidden>
+    <div><b>先装到主屏幕再开始记：</b>点 Safari 底部的「分享」→「添加到主屏幕」。装好之后从桌面图标打开，断网也能用。</div>
+    <div>注意：在浏览器里记的内容，<b>不会</b>跟到主屏幕的 App 里（iPhone 把两边的存储分开放）。</div>
+    <button id="installOk">知道了</button>
+  </div>
+
+  <section class="composer" id="composer">
+    <textarea id="ta" placeholder="想到什么，直接写" rows="1"></textarea>
+    <div class="thumbs" id="thumbs"></div>
+    <div class="tierline" id="tierNew"></div>
+    <div class="bar">
+      <button class="ghost" id="addImg">图片</button>
+      <button class="ghost" id="winNew">时效 · 长期</button>
+      <span class="hint" id="draftHint"></span>
+      <button class="primary" id="saveNew" disabled>存下</button>
+    </div>
+  </section>
+  <input type="file" accept="image/*" multiple hidden id="fileNew">
+
+  <div>
+    <div class="pulse-wrap"><div class="pulse" id="pulse"></div></div>
+    <div class="tally" id="tally"></div>
+  </div>
+
+  <nav class="filters" id="filters"></nav>
+  <main class="feed" id="feed"></main>
+
+  <footer class="ft">
+    <button id="bkOpen">备份</button>
+    <button id="restoreBtn">从备份恢复</button>
+    <button id="trashBtn">最近删除</button>
+    <span class="use" id="use"></span>
+  </footer>
+  <input type="file" accept=".json,application/json" hidden id="fileRestore">
+</div>
+
+<!-- 编辑 -->
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-in">
+    <div class="sheet-hd">
+      <span class="ttl">编辑</span>
+      <div class="rt">
+        <span class="hint" id="sheetHint"></span>
+        <button class="done" id="sheetDone">完成</button>
+      </div>
+    </div>
+    <textarea id="eta" placeholder="写点什么"></textarea>
+    <div class="thumbs" id="ethumbs"></div>
+    <div class="rows">
+      <div class="row"><span class="k">值得</span><div class="seg" id="tierEdit"></div></div>
+      <div class="row"><span class="k">时效</span><div class="seg" id="winEdit"></div></div>
+    </div>
+    <div class="bar">
+      <button class="ghost" id="eAddImg">加图片</button>
+      <button class="danger" id="eDel">删除</button>
+    </div>
+    <div class="stamp" id="eStamp"></div>
+  </div>
+</div>
+<input type="file" accept="image/*" multiple hidden id="fileEdit">
+
+<!-- 备份 -->
+<div class="sheet" id="bkSheet" hidden>
+  <div class="sheet-in">
+    <div class="sheet-hd">
+      <span class="ttl">备份</span>
+      <div class="rt"><button class="done" id="bkClose">关闭</button></div>
+    </div>
+    <div class="bk-body" id="bkBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden><span id="toastTx"></span><button id="toastAct" hidden></button></div>
+
+<script>
+'use strict';
+
+/* ================= 常量 ================= */
+const TIERS = [['unrated','未评'],['self','自留'],['moments','朋友圈'],['serious','严肃']];
+const TIER_LABEL = Object.fromEntries(TIERS);
+const WINS = [0,3,7,30];
+const WIN_LABEL = {0:'长期',3:'3天',7:'7天',30:'30天'};
+const DAY = 864e5;
+const AUTO_FILE_MS = 10*60*1000;   // 草稿搁置超过 10 分钟，下次打开自动存成一条
+const K = {draft:'zdf.draft', mirror:'zdf.mirror', meta:'zdf.meta', editing:'zdf.editing'};
+const $ = id => document.getElementById(id);
+
+/* ================= 第一层：localStorage（同步写，按一个键存一次） ================= */
+const ls = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); return true; }catch(e){ return false; } },
+  del(k){ try{ localStorage.removeItem(k); }catch(e){} }
+};
+
+/* ================= 第二层：IndexedDB（帖子 + 图片原件） ================= */
+let dbp = null;
+function idb(){
+  if(dbp) return dbp;
+  dbp = new Promise((res, rej) => {
+    const r = indexedDB.open('zhidefa', 1);
+    r.onupgradeneeded = () => {
+      const d = r.result;
+      if(!d.objectStoreNames.contains('posts')) d.createObjectStore('posts', {keyPath:'id'});
+      if(!d.objectStoreNames.contains('images')) d.createObjectStore('images');
+    };
+    r.onsuccess = () => { const d = r.result; d.onclose = () => { dbp = null; }; d.onversionchange = () => { d.close(); dbp = null; }; res(d); };
+    r.onerror = () => { dbp = null; rej(r.error); };
+  });
+  return dbp;
+}
+async function tx(store, mode, fn, retry = true){
+  try{
+    const d = await idb();
+    return await new Promise((res, rej) => {
+      const t = d.transaction(store, mode);
+      const r = fn(t.objectStore(store));
+      let out;
+      if(r) r.onsuccess = () => { out = r.result; };
+      t.oncomplete = () => res(out);
+      t.onerror = () => rej(t.error);
+      t.onabort = () => rej(t.error);
+    });
+  }catch(e){
+    // iPhone 切后台后 IndexedDB 连接偶尔会断，重开一次再试
+    dbp = null;
+    if(retry) return tx(store, mode, fn, false);
+    throw e;
+  }
+}
+const idbPut = (store, val, key) => tx(store, 'readwrite', s => key === undefined ? s.put(val) : s.put(val, key));
+const idbGet = (store, key) => tx(store, 'readonly', s => s.get(key));
+const idbAll = store => tx(store, 'readonly', s => s.getAll());
+
+/* ================= 状态 ================= */
+let posts = {};
+let draft = ls.get(K.draft, null) || blankDraft();
+let meta = Object.assign({lastBackup:0, installOk:false, persisted:false}, ls.get(K.meta, {}));
+let filter = {tier:'all', day:null};
+let editing = null;
+const urls = {};        // 图片 id → objectURL
+const loadingImg = new Set();
+
+function blankDraft(){ return {text:'', images:[], tier:'unrated', win:0, startedAt:0, editedAt:0}; }
+function uid(p){ return p + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+function saveMeta(){ ls.set(K.meta, meta); }
+function draftEmpty(){ return !draft.text.trim() && !draft.images.length; }
+
+/* ================= 读入 ================= */
+async function load(){
+  const mirror = ls.get(K.mirror, {}) || {};
+  let fromIdb = [];
+  try{ fromIdb = await idbAll('posts') || []; }catch(e){}
+  const byId = {};
+  fromIdb.forEach(p => { byId[p.id] = p; });
+  posts = Object.assign({}, mirror);
+  fromIdb.forEach(p => {
+    const m = posts[p.id];
+    if(!m || (p.updatedAt||0) >= (m.updatedAt||0)) posts[p.id] = p;
+  });
+  // 两边互相补齐：谁缺谁新就写回去
+  for(const id in posts){
+    const p = posts[id], i = byId[id];
+    if(!i || (p.updatedAt||0) > (i.updatedAt||0)) idbPut('posts', p).catch(() => {});
+  }
+  ls.set(K.mirror, posts);
+
+  // 编辑到一半被关掉的
+  const e = ls.get(K.editing, null);
+  if(e && e.id && posts[e.id] && (e.editedAt||0) > (posts[e.id].updatedAt||0)){
+    const p = Object.assign({}, e); delete p.editedAt;
+    savePost(p, true);
+  }
+  ls.del(K.editing);
+}
+
+/* ================= 保存（先同步写 localStorage，再写 IndexedDB） ================= */
+async function savePost(p, quiet){
+  p.updatedAt = Date.now();
+  posts[p.id] = p;
+  const lsOk = ls.set(K.mirror, posts);
+  let idbOk = true;
+  try{ await idbPut('posts', p); }catch(e){ idbOk = false; }
+  if(!lsOk && !idbOk) toast('手机存储出错了，这条可能没存上，先截个图保底');
+  askPersist();
+  if(!quiet) render(); else renderSoft();
+}
+
+async function askPersist(){
+  if(meta.persisted || !navigator.storage || !navigator.storage.persist) return;
+  try{ meta.persisted = await navigator.storage.persist(); saveMeta(); }catch(e){}
+}
+
+/* ================= 图片 ================= */
+function compress(file){
+  return new Promise(res => {
+    const u = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const max = 1600, s = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(u);
+      c.toBlob(b => res(b || file), 'image/jpeg', 0.82);
+    };
+    img.onerror = () => { URL.revokeObjectURL(u); res(file); };
+    img.src = u;
+  });
+}
+async function pickImages(files, target, redraw){
+  for(const f of Array.from(files).slice(0, 9)){
+    if(!/^image\//.test(f.type)) continue;
+    const blob = await compress(f);
+    const id = uid('img_');
+    try{ await idbPut('images', blob, id); }
+    catch(e){ toast('有张图没存进手机，再选一次试试'); continue; }
+    urls[id] = URL.createObjectURL(blob);
+    const t = target(); if(!t) return;
+    t.images.push(id);
+    redraw();
+  }
+}
+function imgSrc(id){
+  if(urls[id]) return urls[id];
+  if(!loadingImg.has(id)){
+    loadingImg.add(id);
+    idbGet('images', id).then(b => {
+      if(b){ urls[id] = URL.createObjectURL(b); renderSoft(); if(editing) renderEditThumbs(); }
+    }).catch(() => {});
+  }
+  return '';
+}
+
+/* ================= 时间 ================= */
+const WD = ['周日','周一','周二','周三','周四','周五','周六'];
+function sod(ts){ const d = new Date(ts); d.setHours(0,0,0,0); return d.getTime(); }
+function dayTitle(ts){
+  const t = sod(Date.now()), s = sod(ts);
+  if(s === t) return '今天';
+  if(s === t - DAY) return '昨天';
+  if(s === t - 2*DAY) return '前天';
+  const d = new Date(ts);
+  return (d.getMonth()+1) + '月' + d.getDate() + '日';
+}
+function hhmm(ts){ const d = new Date(ts); return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); }
+function ymd(ts){ const d = new Date(ts); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function winState(p){
+  if(!p.win) return null;
+  const left = Math.ceil((p.createdAt + p.win*DAY - Date.now()) / DAY);
+  return left <= 0 ? {over:true, label:'窗口已过'} : {over:false, label:'剩 ' + left + ' 天'};
+}
+
+/* ================= 渲染 ================= */
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const all = () => Object.values(posts).filter(p => p && !p.deleted).sort((a,b) => b.createdAt - a.createdAt);
+const gone = () => Object.values(posts).filter(p => p && p.deleted).sort((a,b) => (b.deletedAt||0) - (a.deletedAt||0));
+
+function renderPulse(){
+  const list = all(), today = sod(Date.now()), order = {serious:0, moments:1, self:2, unrated:3};
+  let html = '';
+  for(let i = 6; i >= 0; i--){
+    const d0 = today - i*DAY;
+    const items = list.filter(p => sod(p.createdAt) === d0).sort((a,b) => order[a.tier] - order[b.tier]);
+    let marks = items.slice(0,5).map(p => '<i class="mk ' + p.tier + '"></i>').join('');
+    if(items.length > 5) marks += '<span class="more">+' + (items.length-5) + '</span>';
+    const d = new Date(d0);
+    html += '<button class="day' + (i===0?' today':'') + '" data-d="' + d0 + '" aria-pressed="' + (filter.day===d0) + '">'
+      + '<span class="stack">' + marks + '</span>'
+      + '<span class="num">' + d.getDate() + '</span>'
+      + '<span class="lbl">' + WD[d.getDay()].slice(1) + '</span></button>';
+  }
+  $('pulse').innerHTML = html;
+}
+
+function renderTally(){
+  const list = all(), today = sod(Date.now());
+  const week = list.filter(p => p.createdAt >= today - 6*DAY);
+  const n = t => week.filter(p => p.tier === t).length;
+  const days = new Set(list.map(p => sod(p.createdAt)));
+  let streak = 0, c = days.has(today) ? today : today - DAY;
+  while(days.has(c)){ streak++; c -= DAY; }
+  const un = n('unrated');
+  $('tally').innerHTML =
+      '<span><b>' + week.length + '</b>条 · 近七天</span><span class="sep">|</span>'
+    + '<span>严肃 <b>' + n('serious') + '</b></span>'
+    + '<span>朋友圈 <b>' + n('moments') + '</b></span>'
+    + '<span>自留 <b>' + n('self') + '</b></span>'
+    + (un ? '<span style="color:var(--ochre)">未评 ' + un + '</span>' : '')
+    + '<span class="sep">|</span><span>连着记了 <b>' + streak + '</b> 天</span>';
+}
+
+function renderFilters(){
+  if(filter.tier === 'trash'){
+    $('filters').innerHTML = '<button class="opt" data-f="all" aria-pressed="true">最近删除 · 点一条就恢复 ✕</button>';
+    return;
+  }
+  const opts = [['all','全部'],['serious','严肃'],['moments','朋友圈'],['self','自留'],['unrated','未评']];
+  let html = opts.map(([v,l]) => '<button class="opt" data-f="' + v + '" aria-pressed="' + (filter.tier===v) + '">' + l + '</button>').join('');
+  if(filter.day !== null) html += '<button class="opt" data-f="clearday" aria-pressed="true">' + dayTitle(filter.day) + ' ✕</button>';
+  $('filters').innerHTML = html;
+}
+
+function cardHtml(p, mode){
+  const w = winState(p);
+  const cls = 'card' + (p.win ? ' timely' : '') + (w && w.over ? ' stale' : '')
+    + (mode === 'sample' ? ' sample' : '') + (mode === 'trash' ? ' gone' : '');
+  const txt = (p.text || '').trim();
+  const imgs = mode === 'sample' ? '' : (p.images || []).map(id => '<img src="' + imgSrc(id) + '" alt="">').join('');
+  const quick = (p.tier === 'unrated' && mode === 'live')
+    ? '<span class="qr"><span class="q">评一下</span>'
+      + '<button data-rate="self">自留</button><button data-rate="moments">朋友圈</button><button data-rate="serious">严肃</button></span>'
+    : '<span class="tag ' + p.tier + '">' + TIER_LABEL[p.tier] + '</span>';
+  return '<article class="' + cls + '" data-id="' + esc(p.id) + '" tabindex="' + (mode==='sample' ? -1 : 0) + '">'
+    + '<div class="tx' + (txt ? '' : ' empty') + '">' + (txt ? esc(txt) : '（只有图片）') + '</div>'
+    + (imgs ? '<div class="ims">' + imgs + '</div>' : '')
+    + '<div class="meta">' + quick
+    + (w ? '<span class="tag win' + (w.over ? ' over' : '') + '">' + w.label + '</span>' : '')
+    + '<span class="t">' + (mode === 'trash' ? '删于 ' + dayTitle(p.deletedAt) + ' ' + hhmm(p.deletedAt) : hhmm(p.createdAt)) + '</span>'
+    + '</div></article>';
+}
+
+const SAMPLES = [
+  {id:'s1', text:'路上想到的一句：所谓“积累”，是把没想明白的事先写下来，等它自己长出结论。', tier:'serious', win:0, createdAt:Date.now()-36e5},
+  {id:'s2', text:'食堂新开的窗口，排队的人绕了两圈。', tier:'moments', win:3, createdAt:Date.now()-72e5},
+  {id:'s3', text:'今天状态很差，先记着，明天再看还成不成立。', tier:'self', win:0, createdAt:Date.now()-9e6}
+];
+
+function renderFeed(){
+  const el = $('feed');
+  if(filter.tier === 'trash'){
+    const g = gone();
+    el.innerHTML = g.length ? '<section class="group">' + g.map(p => cardHtml(p, 'trash')).join('') + '</section>'
+                            : '<p class="note">没有删掉的东西。</p>';
+    return;
+  }
+  const list0 = all();
+  if(!list0.length){
+    el.innerHTML = '<div class="empty">'
+      + '<p class="note">在上面写一句，点「存下」就行。<b>不用当场评级</b>——默认「未评」，回头在列表里点一下就能评。<br>'
+      + '「严肃」是能认真发出去的，「朋友圈」是随手发的，「自留」只给自己看。<br>'
+      + '标了时效的会倒数，窗口过了就自动划掉。<br>'
+      + '写到一半直接退出也没事：草稿每个字都存着；搁了 10 分钟以上，下次打开会自动存成一条。</p>'
+      + '<div class="sample-flag">以下是示例，写下第一条后消失</div>'
+      + SAMPLES.map(s => cardHtml(Object.assign({images:[]}, s), 'sample')).join('')
+      + '</div>';
+    return;
+  }
+  const list = list0.filter(p =>
+    (filter.tier === 'all' || p.tier === filter.tier) &&
+    (filter.day === null || sod(p.createdAt) === filter.day));
+  if(!list.length){ el.innerHTML = '<p class="note">这个条件下没有帖子。</p>'; return; }
+  const groups = [];
+  let last = null;
+  list.forEach(p => {
+    const k = sod(p.createdAt);
+    if(!last || last.k !== k){ last = {k, items:[]}; groups.push(last); }
+    last.items.push(p);
+  });
+  el.innerHTML = groups.map(g =>
+    '<section class="group"><div class="ghd"><span class="d">' + dayTitle(g.k) + '</span>'
+    + '<span class="w">' + WD[new Date(g.k).getDay()] + '</span>'
+    + '<span class="c">' + g.items.length + ' 条</span></div>'
+    + g.items.map(p => cardHtml(p, 'live')).join('') + '</section>').join('');
+}
+
+function thumbsHtml(ids){
+  return ids.map((id, i) => '<span class="thumb"><img src="' + imgSrc(id) + '" alt="">'
+    + '<button class="x" data-rm="' + i + '" aria-label="移除这张图">✕</button></span>').join('');
+}
+
+function renderComposer(){
+  $('thumbs').innerHTML = thumbsHtml(draft.images);
+  $('tierNew').innerHTML = TIERS.map(([v,l]) => '<button class="opt" data-t="' + v + '" aria-pressed="' + (draft.tier===v) + '">' + l + '</button>').join('');
+  $('winNew').textContent = '时效 · ' + WIN_LABEL[draft.win];
+  $('winNew').classList.toggle('on', draft.win > 0);
+  $('saveNew').disabled = draftEmpty();
+}
+
+function renderBackupChip(){
+  const el = $('bkChip'), list = Object.values(posts);
+  if(!list.length){ el.hidden = true; return; }
+  el.hidden = false;
+  const changed = list.some(p => (p.updatedAt||0) > meta.lastBackup);
+  const days = meta.lastBackup ? Math.floor((Date.now() - meta.lastBackup) / DAY) : null;
+  let s = 'ok', tx;
+  if(!meta.lastBackup){ s = 'due'; tx = '还没备份过'; }
+  else if(changed && days >= 7){ s = days >= 14 ? 'warn' : 'due'; tx = days + ' 天没备份了'; }
+  else tx = days === 0 ? '今天备份过' : '备份于 ' + days + ' 天前';
+  el.dataset.s = s;
+  $('bkTx').textContent = tx;
+}
+
+async function renderUse(){
+  const n = gone().length;
+  $('trashBtn').textContent = '最近删除' + (n ? ' (' + n + ')' : '');
+  if(navigator.storage && navigator.storage.estimate){
+    try{
+      const e = await navigator.storage.estimate();
+      $('use').textContent = '占用 ' + (e.usage/1048576).toFixed(1) + ' MB' + (meta.persisted ? ' · 已锁定' : '');
+    }catch(e){}
+  }
+}
+
+let raf = 0;
+function render(){
+  if(raf) return;
+  raf = requestAnimationFrame(() => {
+    raf = 0;
+    renderPulse(); renderTally(); renderFilters(); renderFeed(); renderComposer(); renderBackupChip(); renderUse();
+  });
+}
+// 打字时不重绘输入框，避免光标跳
+function renderSoft(){
+  requestAnimationFrame(() => { renderPulse(); renderTally(); renderFilters(); renderFeed(); renderBackupChip(); renderUse(); });
+}
+
+/* ================= 输入框（每个字都落盘） ================= */
+const ta = $('ta');
+function grow(el, min){ el.style.height = 'auto'; el.style.height = Math.max(el.scrollHeight + 2, min) + 'px'; }
+let hintT = 0;
+function hint(el, msg){ el.textContent = msg; clearTimeout(hintT); hintT = setTimeout(() => { el.textContent = ''; }, 1500); }
+
+function touchDraft(){
+  const now = Date.now();
+  if(!draft.startedAt) draft.startedAt = now;
+  draft.editedAt = now;
+  if(draftEmpty()){ draft.startedAt = 0; }
+  ls.set(K.draft, draft);
+}
+ta.addEventListener('input', () => {
+  draft.text = ta.value;
+  touchDraft(); grow(ta, 128);
+  $('saveNew').disabled = draftEmpty();
+  hint($('draftHint'), '已存草稿');
+});
+ta.addEventListener('focus', () => $('composer').classList.add('focus'));
+ta.addEventListener('blur', () => $('composer').classList.remove('focus'));
+
+$('tierNew').addEventListener('click', e => {
+  const b = e.target.closest('[data-t]'); if(!b) return;
+  draft.tier = b.dataset.t; ls.set(K.draft, draft); renderComposer();
+});
+$('winNew').addEventListener('click', () => {
+  draft.win = WINS[(WINS.indexOf(draft.win) + 1) % WINS.length];
+  ls.set(K.draft, draft); renderComposer();
+});
+$('thumbs').addEventListener('click', e => {
+  const b = e.target.closest('[data-rm]'); if(!b) return;
+  draft.images.splice(+b.dataset.rm, 1); touchDraft(); renderComposer();
+});
+$('addImg').addEventListener('click', () => $('fileNew').click());
+$('fileNew').addEventListener('change', e => {
+  pickImages(e.target.files, () => draft, () => { touchDraft(); renderComposer(); });
+  e.target.value = '';
+});
+
+function fileDraft(auto){
+  if(draftEmpty()) return;
+  const now = Date.now();
+  const p = {
+    id: uid('p_'), text: draft.text, images: draft.images.slice(),
+    tier: draft.tier, win: draft.win,
+    createdAt: draft.startedAt || now, updatedAt: now, deleted: false
+  };
+  savePost(p);                       // 同步部分已把它写进 localStorage
+  draft = blankDraft(); ls.set(K.draft, draft);
+  ta.value = ''; grow(ta, 128);
+  renderComposer();
+  toast(auto ? '上次写到一半的那段，已经替你存成一条了' : '存下了');
+}
+$('saveNew').addEventListener('click', () => { fileDraft(false); });
+
+function fileStaleDraft(){
+  if(!draftEmpty() && draft.editedAt && Date.now() - draft.editedAt > AUTO_FILE_MS && document.activeElement !== ta){
+    fileDraft(true);
+  }
+}
+
+/* ================= 列表交互 ================= */
+$('feed').addEventListener('click', e => {
+  const card = e.target.closest('.card'); if(!card || card.classList.contains('sample')) return;
+  const p = posts[card.dataset.id]; if(!p) return;
+  const r = e.target.closest('[data-rate]');
+  if(r){
+    savePost(Object.assign({}, p, {tier: r.dataset.rate}));
+    toast('评为「' + TIER_LABEL[r.dataset.rate] + '」');
+    return;
+  }
+  if(p.deleted){
+    const q = Object.assign({}, p, {deleted:false}); delete q.deletedAt;
+    savePost(q); toast('恢复了');
+    if(!gone().length) filter.tier = 'all';
+    return;
+  }
+  openEdit(p.id);
+});
+$('feed').addEventListener('keydown', e => {
+  if(e.key === 'Enter' && e.target.classList.contains('card')) e.target.click();
+});
+$('pulse').addEventListener('click', e => {
+  const b = e.target.closest('[data-d]'); if(!b) return;
+  const d = +b.dataset.d;
+  filter.day = filter.day === d ? null : d;
+  if(filter.tier === 'trash') filter.tier = 'all';
+  render();
+});
+$('filters').addEventListener('click', e => {
+  const b = e.target.closest('[data-f]'); if(!b) return;
+  if(b.dataset.f === 'clearday') filter.day = null; else filter.tier = b.dataset.f;
+  render();
+});
+$('trashBtn').addEventListener('click', () => {
+  filter.tier = filter.tier === 'trash' ? 'all' : 'trash'; filter.day = null; render();
+  $('filters').scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+/* ================= 编辑 ================= */
+const sheet = $('sheet'), eta = $('eta');
+function segs(el, opts, attr, cur){
+  $(el).innerHTML = opts.map(([v,l]) => '<button class="opt" data-' + attr + '="' + v + '" aria-pressed="' + (v===cur) + '">' + l + '</button>').join('');
+}
+function openEdit(id){
+  editing = JSON.parse(JSON.stringify(posts[id]));
+  eta.value = editing.text;
+  $('eStamp').innerHTML = '写于 ' + new Date(editing.createdAt).toLocaleString('zh-CN')
+    + (editing.updatedAt - editing.createdAt > 60000 ? '<br>改于 ' + new Date(editing.updatedAt).toLocaleString('zh-CN') : '');
+  renderEditThumbs();
+  segs('tierEdit', TIERS, 't', editing.tier);
+  segs('winEdit', WINS.map(w => [w, WIN_LABEL[w]]), 'w', editing.win);
+  sheet.hidden = false; document.body.style.overflow = 'hidden';
+  requestAnimationFrame(() => grow(eta, 220));
+}
+function renderEditThumbs(){ if(editing) $('ethumbs').innerHTML = thumbsHtml(editing.images); }
+function commitEdit(){
+  if(!editing) return;
+  editing.text = eta.value;
+  const cur = posts[editing.id];
+  if(cur && cur.text === editing.text && cur.tier === editing.tier && cur.win === editing.win
+     && JSON.stringify(cur.images) === JSON.stringify(editing.images)) { ls.del(K.editing); return; }
+  savePost(JSON.parse(JSON.stringify(editing)), true);
+  ls.del(K.editing);
+}
+function closeEdit(){
+  clearTimeout(editT);
+  commitEdit();
+  editing = null; sheet.hidden = true; document.body.style.overflow = '';
+  render();
+}
+let editT = 0;
+eta.addEventListener('input', () => {
+  if(!editing) return;
+  editing.text = eta.value; grow(eta, 220);
+  ls.set(K.editing, Object.assign({}, editing, {editedAt: Date.now()}));
+  hint($('sheetHint'), '已存');
+  clearTimeout(editT); editT = setTimeout(commitEdit, 600);
+});
+$('sheetDone').addEventListener('click', closeEdit);
+$('tierEdit').addEventListener('click', e => {
+  const b = e.target.closest('[data-t]'); if(!b || !editing) return;
+  editing.tier = b.dataset.t; segs('tierEdit', TIERS, 't', editing.tier); commitEdit();
+});
+$('winEdit').addEventListener('click', e => {
+  const b = e.target.closest('[data-w]'); if(!b || !editing) return;
+  editing.win = +b.dataset.w; segs('winEdit', WINS.map(w => [w, WIN_LABEL[w]]), 'w', editing.win); commitEdit();
+});
+$('ethumbs').addEventListener('click', e => {
+  const b = e.target.closest('[data-rm]'); if(!b || !editing) return;
+  editing.images.splice(+b.dataset.rm, 1); renderEditThumbs(); commitEdit();
+});
+$('eAddImg').addEventListener('click', () => $('fileEdit').click());
+$('fileEdit').addEventListener('change', e => {
+  pickImages(e.target.files, () => editing, () => { renderEditThumbs(); commitEdit(); });
+  e.target.value = '';
+});
+$('eDel').addEventListener('click', () => {
+  if(!editing) return;
+  clearTimeout(editT);
+  editing.text = eta.value;
+  const id = editing.id;
+  savePost(Object.assign({}, editing, {deleted:true, deletedAt:Date.now()}));
+  ls.del(K.editing);
+  editing = null; sheet.hidden = true; document.body.style.overflow = '';
+  toast('删了（在「最近删除」里还能找回）', '撤销', () => {
+    const q = Object.assign({}, posts[id], {deleted:false}); delete q.deletedAt;
+    savePost(q); toast('回来了');
+  });
+});
+
+/* ================= 备份 / 恢复 ================= */
+let bkFile = null;
+function blobToDataURL(b){
+  return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(b); });
+}
+async function buildBackup(){
+  const list = Object.values(posts);
+  const images = {};
+  for(const p of list){
+    for(const id of (p.images || [])){
+      if(images[id]) continue;
+      try{ const b = await idbGet('images', id); if(b) images[id] = await blobToDataURL(b); }catch(e){}
+    }
+  }
+  const data = JSON.stringify({app:'zhidefa', v:1, exportedAt:Date.now(), posts:list, images});
+  return new File([data], '值得发备份-' + ymd(Date.now()) + '.json', {type:'application/json'});
+}
+async function openBackup(){
+  $('bkSheet').hidden = false; document.body.style.overflow = 'hidden';
+  const body = $('bkBody');
+  body.innerHTML = '<p class="muted">正在打包…</p>';
+  bkFile = await buildBackup();
+  const n = Object.values(posts).length;
+  const canShare = navigator.canShare && navigator.canShare({files:[bkFile]});
+  body.innerHTML =
+      '<p class="big">' + n + ' 条，' + (bkFile.size >= 1048576 ? (bkFile.size/1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(bkFile.size/1024)) + ' KB') + '</p>'
+    + '<p>文字和图片都在这一个文件里。点下面的按钮，选「存储到文件」放进 iCloud 云盘，或者用微信发给「文件传输助手」。</p>'
+    + '<button class="primary" id="bkGo">' + (canShare ? '保存 / 发送' : '下载备份文件') + '</button>'
+    + '<p class="muted">为什么要备份：所有东西只存在这台手机上。手机丢了、换手机、删掉这个 App，没备份的就找不回来了。'
+    + '换新手机时，在底部点「从备份恢复」选这个文件就行。</p>'
+    + (meta.lastBackup ? '<p class="muted">上次备份：' + new Date(meta.lastBackup).toLocaleString('zh-CN') + '</p>' : '');
+  $('bkGo').addEventListener('click', doShare);
+}
+async function doShare(){
+  if(!bkFile) return;
+  if(navigator.canShare && navigator.canShare({files:[bkFile]})){
+    try{
+      await navigator.share({files:[bkFile], title:'值得发备份'});
+      markBackedUp();
+    }catch(e){ if(e && e.name !== 'AbortError') toast('没分享出去，再试一次'); }
+  }else{
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(bkFile); a.download = bkFile.name;
+    document.body.appendChild(a); a.click(); a.remove();
+    markBackedUp();
+  }
+}
+function markBackedUp(){
+  meta.lastBackup = Date.now(); saveMeta();
+  renderBackupChip(); closeBackup(); toast('备份好了');
+}
+function closeBackup(){ $('bkSheet').hidden = true; document.body.style.overflow = ''; bkFile = null; }
+$('bkOpen').addEventListener('click', openBackup);
+$('bkChip').addEventListener('click', openBackup);
+$('bkClose').addEventListener('click', closeBackup);
+
+$('restoreBtn').addEventListener('click', () => $('fileRestore').click());
+$('fileRestore').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if(!f) return;
+  let data;
+  try{ data = JSON.parse(await f.text()); }catch(err){ toast('这个文件打不开，不是「值得发」的备份'); return; }
+  if(!data || data.app !== 'zhidefa' || !Array.isArray(data.posts)){ toast('这个文件不是「值得发」的备份'); return; }
+  let imgs = 0, n = 0;
+  for(const [id, url] of Object.entries(data.images || {})){
+    try{
+      if(await idbGet('images', id)) continue;
+      const b = await (await fetch(url)).blob();
+      await idbPut('images', b, id); imgs++;
+    }catch(err){}
+  }
+  for(const p of data.posts){
+    const m = posts[p.id];
+    if(!m || (p.updatedAt||0) > (m.updatedAt||0)){
+      posts[p.id] = p; n++;
+      try{ await idbPut('posts', p); }catch(err){}
+    }
+  }
+  ls.set(K.mirror, posts);
+  render();
+  toast(n ? '恢复了 ' + n + ' 条' + (imgs ? '、' + imgs + ' 张图' : '') : '备份里的内容这里都已经有了');
+});
+
+/* ================= toast ================= */
+let toastT = 0;
+function toast(msg, actLabel, act){
+  const el = $('toast'), b = $('toastAct');
+  $('toastTx').textContent = msg;
+  if(actLabel){ b.hidden = false; b.textContent = actLabel; b.onclick = () => { el.hidden = true; act(); }; }
+  else b.hidden = true;
+  el.hidden = false;
+  clearTimeout(toastT);
+  toastT = setTimeout(() => { el.hidden = true; }, actLabel ? 6000 : 2200);
+}
+
+/* ================= 安装提示 ================= */
+function isStandalone(){
+  return window.navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+}
+if(!isStandalone() && !meta.installOk) $('install').hidden = false;
+$('installOk').addEventListener('click', () => { meta.installOk = true; saveMeta(); $('install').hidden = true; });
+
+/* ================= 兜底：离开前落盘 ================= */
+function flushAll(){
+  if(!sheet.hidden && editing){ clearTimeout(editT); commitEdit(); }
+  draft.text = ta.value;
+  if(!draftEmpty()) ls.set(K.draft, draft);
+}
+window.addEventListener('pagehide', flushAll);
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'hidden') flushAll();
+  else { fileStaleDraft(); render(); }
+});
+setInterval(renderSoft, 60000);
+
+/* ================= 离线缓存 ================= */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => {}); });
+}
+
+/* ================= 启动 ================= */
+ta.value = draft.text || '';
+grow(ta, 128);
+renderComposer();
+load().then(() => { fileStaleDraft(); render(); });
+</script>
+</body>
+</html>
