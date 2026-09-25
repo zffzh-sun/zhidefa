@@ -238,6 +238,7 @@ button{cursor:pointer;background:none;border:none;padding:0}
 }
 .ft button{font-family:var(--font-body);font-size:13px;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
 .ft .use{margin-left:auto}
+.diag{font-family:var(--font-mono);font-size:11.5px;line-height:1.9;color:var(--ink-2);background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:12px 14px;white-space:pre-wrap;word-break:break-all;margin:0}
 
 /* ---------- sheets ---------- */
 .sheet{
@@ -327,8 +328,10 @@ button{cursor:pointer;background:none;border:none;padding:0}
     <button id="bkOpen">备份</button>
     <button id="restoreBtn">从备份恢复</button>
     <button id="trashBtn">最近删除</button>
+    <button id="diagBtn">存储体检</button>
     <span class="use" id="use"></span>
   </footer>
+  <pre class="diag" id="diag" hidden></pre>
   <input type="file" hidden id="fileRestore">
 </div>
 
@@ -448,7 +451,7 @@ function draftEmpty(){ return !draft.text.trim() && !draft.images.length; }
 async function load(){
   const mirror = ls.get(K.mirror, {}) || {};
   let fromIdb = [];
-  try{ fromIdb = await idbAll('posts') || []; }catch(e){}
+  try{ fromIdb = await idbAll('posts') || []; bootIdb = fromIdb.length; }catch(e){ bootIdb = '读取失败'; }
   const byId = {};
   fromIdb.forEach(p => { byId[p.id] = p; });
   posts = Object.assign({}, mirror);
@@ -1004,6 +1007,42 @@ function toast(msg, actLabel, act){
   toastT = setTimeout(() => { el.hidden = true; }, actLabel ? 6000 : 2200);
 }
 
+/* ================= 存储体检：判断数据是不是被系统清掉了 ================= */
+// 这几个值在 load() 改写存储之前就读好，反映的是「上次关掉时留下了什么」
+var bootIdb = null;
+const bootBorn = ls.get('zdf.born', 0);
+const bootOpens = (ls.get('zdf.opens', 0) || 0) + 1;
+const bootMirror = Object.keys(ls.get(K.mirror, {}) || {}).length;
+ls.set('zdf.opens', bootOpens);
+if(!bootBorn) ls.set('zdf.born', Date.now());
+
+function browserName(){
+  const ua = navigator.userAgent;
+  const hits = ua.match(/(HuaweiBrowser|HBPC|HarmonyOS|MicroMessenger|QQBrowser|UCBrowser|EdgA|Firefox|SamsungBrowser|Chrome)\/?[\d.]*/g);
+  return hits ? hits.join(' ') : ua.slice(0, 80);
+}
+async function renderDiag(){
+  const L = [];
+  L.push('打开方式　' + (isStandalone() ? '桌面图标' : '浏览器页面'));
+  L.push('浏览器　　' + browserName());
+  L.push('本机数据　' + (bootBorn ? '建立于 ' + new Date(bootBorn).toLocaleString('zh-CN') : '本次打开时新建（之前没有数据）'));
+  L.push('打开次数　第 ' + bootOpens + ' 次');
+  L.push('启动时读到　localStorage ' + bootMirror + ' 条 · IndexedDB ' + (bootIdb === null ? '?' : bootIdb) + ' 条');
+  L.push('现在共有　' + Object.keys(posts).length + ' 条');
+  try{ const ks = await caches.keys(); L.push('离线缓存　' + (ks.length ? ks.join(', ') : '没有')); }catch(e){ L.push('离线缓存　读不到'); }
+  if(navigator.storage && navigator.storage.persisted){
+    try{ L.push('长期保存　' + ((await navigator.storage.persisted()) ? '已允许' : '未允许（系统可能自动清理）')); }catch(e){ L.push('长期保存　读不到'); }
+  }else L.push('长期保存　浏览器不支持');
+  if(navigator.storage && navigator.storage.estimate){
+    try{ const e = await navigator.storage.estimate(); L.push('存储配额　' + Math.round((e.quota||0)/1048576) + ' MB（已用 ' + ((e.usage||0)/1048576).toFixed(1) + ' MB）'); }catch(e){}
+  }
+  $('diag').textContent = L.join('\n');
+}
+$('diagBtn').addEventListener('click', () => {
+  const d = $('diag'); d.hidden = !d.hidden;
+  if(!d.hidden){ renderDiag(); d.scrollIntoView({behavior:'smooth', block:'nearest'}); }
+});
+
 /* ================= 安装提示 ================= */
 function isStandalone(){
   return window.navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
@@ -1033,7 +1072,7 @@ if('serviceWorker' in navigator){
 ta.value = draft.text || '';
 grow(ta, 128);
 renderComposer();
-load().then(() => { fileStaleDraft(); render(); });
+load().then(() => { fileStaleDraft(); render(); askPersist(); });
 </script>
 </body>
 </html>
